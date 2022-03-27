@@ -6,6 +6,7 @@ import (
 	"gin_weibo/utils"
 	"net/http"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,9 +28,9 @@ func LoginPost(c *gin.Context) {
 			设置了session后会将数据处理设置到cookie，然后再浏览器进行网络请求的时候回自动带上cookie
 			因为我们可以通过获取这个cookie来判断用户是谁，这里我们使用的是session的方式进行设置
 		*/
-		// session := sessions.Default(c)
-		// session.Set("loginuser", username)
-		// session.Save()
+		session := sessions.Default(c)
+		session.Set("loginuser", username)
+		session.Save()
 
 		c.JSON(http.StatusOK, gin.H{"code": 1, "message": "登录成功"})
 	} else {
