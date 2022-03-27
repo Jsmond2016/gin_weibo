@@ -50,6 +50,12 @@ func InitRouter() *gin.Engine {
 	// 标签
 	router.GET("/tags", controllers.TagsGet)
 
+	//相册
+	router.GET("/album", controllers.AlbumGet)
+
+	//文件上传
+	router.POST("/upload", controllers.UploadPost)
+
 	return router
 
 }
