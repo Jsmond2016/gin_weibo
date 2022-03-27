@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"gin_weibo/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,33 +17,27 @@ func HomeGet(c *gin.Context) {
 	//获取session，判断用户是否登录
 	islogin := GetSession(c)
 
-	page := 1
+	tag := c.Query("tag")
+	fmt.Println("tag:", tag)
+	page, _ := strconv.Atoi(c.Query("page"))
 	var artList []models.Article
-	artList, _ = models.FindArticleWithPage(page)
+
+	var hasFooter bool
+
+	if len(tag) > 0 {
+		//按照指定的标签搜索
+		artList, _ = models.QueryArticlesWithTag(tag)
+		hasFooter = false
+	} else {
+		if page <= 0 {
+			page = 1
+		}
+		artList, _ = models.FindArticleWithPage(page)
+		hasFooter = true
+	}
+
+	homeFooterPageCode := models.ConfigHomeFooterPageCode(page)
 	html := models.MakeHomeBlocks(artList, islogin)
 
-	c.HTML(http.StatusOK, "home.html", gin.H{"IsLogin": islogin, "Content": html})
-	// tag := c.Query("tag")
-	// fmt.Println("tag:", tag)
-	// page, _ := strconv.Atoi(c.Query("page"))
-	// var artList []models.Article
-
-	// var hasFooter bool
-
-	// if len(tag) > 0 {
-	// 	//按照指定的标签搜索
-	// 	artList, _ = models.QueryArticlesWithTag(tag)
-	// 	hasFooter = false
-	// } else {
-	// 	if page <= 0 {
-	// 		page = 1
-	// 	}
-	// 	artList, _ = models.FindArticleWithPage(page)
-	// 	hasFooter = true
-	// }
-
-	// homeFooterPageCode := models.ConfigHomeFooterPageCode(page)
-	// html := models.MakeHomeBlocks(artList, islogin)
-
-	// c.HTML(http.StatusOK, "home.html", gin.H{"IsLogin": islogin, "Content": html, "HasFooter": hasFooter, "PageCode": homeFooterPageCode})
+	c.HTML(http.StatusOK, "home.html", gin.H{"IsLogin": islogin, "Content": html, "HasFooter": hasFooter, "PageCode": homeFooterPageCode})
 }
