@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"gin_weibo/models"
+	"gin_weibo/utils"
 	"net/http"
 	"strconv"
 	"time"
@@ -62,5 +63,7 @@ func ShowArticleGet(c *gin.Context) {
 	//获取id所对应的文章信息
 	art := models.QueryArticleWithId(id)
 	//渲染HTML
-	c.HTML(http.StatusOK, "show_article.html", gin.H{"IsLogin": islogin, "Title": art.Title, "Content": art.Content})
+	// c.HTML(http.StatusOK, "show_article.html", gin.H{"IsLogin": islogin, "Title": art.Title, "Content": art.Content})
+	// 以 markdown 的格式渲染文档
+	c.HTML(http.StatusOK, "show_article.html", gin.H{"IsLogin": islogin, "Title": art.Title, "Content": utils.SwitchMarkdownToHtml(art.Content)})
 }
