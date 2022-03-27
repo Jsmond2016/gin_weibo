@@ -31,6 +31,12 @@ func InitRouter() *gin.Engine {
 	//退出
 	router.GET("/exit", controllers.ExitGet)
 
+	v1 := router.Group("/article")
+	{
+		v1.GET("/add", controllers.AddArticleGet)
+		v1.POST("/add", controllers.AddArticlePost)
+	}
+
 	return router
 
 }
