@@ -33,7 +33,7 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             var urlStr = "/register";
-            // alert("urlStr:"+urlStr)
+            alert("urlStr:"+urlStr)
             $(form).ajaxSubmit({
                 url: urlStr,
                 type: "post",

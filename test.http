@@ -1,0 +1,19 @@
+@host = localhost:8081
+
+###
+GET http://{{host}}/register HTTP/1.1
+
+###
+POST http://{{host}}/register HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+username=Anddy
+&password=123456
+&repassword=123456
+
+
+# {
+#   "username": "Jeff",
+#   "password": "abcdefg",
+#   "repassword": "abcdefg"
+# }
