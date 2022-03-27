@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"gin_weibo/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,13 @@ func HomeGet(c *gin.Context) {
 
 	//获取session，判断用户是否登录
 	islogin := GetSession(c)
-	c.HTML(http.StatusOK, "home.html", gin.H{"IsLogin": islogin})
+
+	page := 1
+	var artList []models.Article
+	artList, _ = models.FindArticleWithPage(page)
+	html := models.MakeHomeBlocks(artList, islogin)
+
+	c.HTML(http.StatusOK, "home.html", gin.H{"IsLogin": islogin, "Content": html})
 	// tag := c.Query("tag")
 	// fmt.Println("tag:", tag)
 	// page, _ := strconv.Atoi(c.Query("page"))
