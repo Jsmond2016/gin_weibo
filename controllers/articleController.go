@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gin_weibo/models"
 	"gin_weibo/utils"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -114,4 +115,19 @@ func UpdateArticlePost(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+//点击删除后重定向到首页
+func DeleteArticleGet(c *gin.Context) {
+
+	idstr := c.Query("id")
+	id, _ := strconv.Atoi(idstr)
+	fmt.Println("删除 id:", id)
+
+	_, err := models.DeleteArticle(id)
+	if err != nil {
+		log.Println(err)
+	}
+	//c.JSON(http.StatusOK, gin.H{"IsLogin": islogin})
+	c.Redirect(http.StatusMovedPermanently, "/")
 }

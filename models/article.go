@@ -18,6 +18,11 @@ type Article struct {
 	//Status int //Status=0为正常，1为删除，2为冻结
 }
 
+//设置页数
+func SetArticleRowsNum() {
+	artcileRowsNum = QueryArticleRowNum()
+}
+
 //---------数据处理-----------
 func AddArticle(article Article) (int64, error) {
 	i, err := insertArticle(article)
@@ -119,4 +124,15 @@ func UpdateArticle(article Article) (int64, error) {
 	//数据库操作
 	return database.ModifyDB("update article set title=?,tags=?,short=?,content=? where id=?",
 		article.Title, article.Tags, article.Short, article.Content, article.Id)
+}
+
+//----------删除文章---------
+func DeleteArticle(artID int) (int64, error) {
+	i, err := deleteArticleWithArtId(artID)
+	SetArticleRowsNum()
+	return i, err
+}
+
+func deleteArticleWithArtId(artID int) (int64, error) {
+	return database.ModifyDB("delete from article where id=?", artID)
 }

@@ -44,6 +44,9 @@ func InitRouter() *gin.Engine {
 	v1.GET("/update", controllers.UpdateArticleGet)
 	v1.POST("/update", controllers.UpdateArticlePost)
 
+	// 删除文章
+	v1.GET("/delete", controllers.DeleteArticleGet)
+
 	return router
 
 }
