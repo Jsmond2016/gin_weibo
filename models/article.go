@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gin_weibo/config"
 	"gin_weibo/database"
+	"log"
 	"strconv"
 )
 
@@ -135,4 +136,19 @@ func DeleteArticle(artID int) (int64, error) {
 
 func deleteArticleWithArtId(artID int) (int64, error) {
 	return database.ModifyDB("delete from article where id=?", artID)
+}
+
+//查询标签，返回一个字段的列表
+func QueryArticleWithParam(param string) []string {
+	rows, err := database.QueryDB(fmt.Sprintf("select %s from article", param))
+	if err != nil {
+		log.Println(err)
+	}
+	var paramList []string
+	for rows.Next() {
+		arg := ""
+		rows.Scan(&arg)
+		paramList = append(paramList, arg)
+	}
+	return paramList
 }

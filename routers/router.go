@@ -47,6 +47,9 @@ func InitRouter() *gin.Engine {
 	// 删除文章
 	v1.GET("/delete", controllers.DeleteArticleGet)
 
+	// 标签
+	router.GET("/tags", controllers.TagsGet)
+
 	return router
 
 }
