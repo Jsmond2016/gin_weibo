@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gin_weibo/config"
 	"gin_weibo/database"
+	"strconv"
 )
 
 type Article struct {
@@ -95,4 +96,19 @@ func QueryArticleRowNum() int {
 	num := 0
 	row.Scan(&num)
 	return num
+}
+
+//----------查询文章-------------
+
+func QueryArticleWithId(id int) Article {
+	row := database.QueryRowDB("select id,title,tags,short,content,author,createtime from article where id=" + strconv.Itoa(id))
+	title := ""
+	tags := ""
+	short := ""
+	content := ""
+	author := ""
+	var createtime int64 = 0
+	row.Scan(&id, &title, &tags, &short, &content, &author, &createtime)
+	art := Article{id, title, tags, short, content, author, createtime}
+	return art
 }

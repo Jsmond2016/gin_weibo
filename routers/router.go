@@ -37,6 +37,9 @@ func InitRouter() *gin.Engine {
 		v1.POST("/add", controllers.AddArticlePost)
 	}
 
+	//显示文章内容
+	router.GET("/show/:id", controllers.ShowArticleGet)
+
 	return router
 
 }
