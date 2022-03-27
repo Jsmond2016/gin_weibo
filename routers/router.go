@@ -40,6 +40,10 @@ func InitRouter() *gin.Engine {
 	//显示文章内容
 	router.GET("/show/:id", controllers.ShowArticleGet)
 
+	//更新文章
+	v1.GET("/update", controllers.UpdateArticleGet)
+	v1.POST("/update", controllers.UpdateArticlePost)
+
 	return router
 
 }

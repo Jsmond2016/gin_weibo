@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,20 +26,23 @@ func AddArticleGet(c *gin.Context) {
 
 func AddArticlePost(c *gin.Context) {
 
-	//获取浏览器传输的数据，通过表单的name属性获取值
-	//获取表单信息
+	// 获取浏览器传输的数据，通过表单的name属性获取值
+	// 获取表单信息
 	title := c.PostForm("title")
 	tags := c.PostForm("tags")
 	short := c.PostForm("short")
 	content := c.PostForm("content")
 	fmt.Printf("title:%s,tags:%s\n", title, tags)
 
+	session := sessions.Default(c)
+	loginuser := session.Get("loginuser").(string)
+
 	//实例化model，将它出入到数据库中
-	art := models.Article{Id: 0, Title: title, Tags: tags, Short: short, Content: content, Author: "孔壹学院", Createtime: time.Now().Unix()}
+	art := models.Article{Id: 0, Title: title, Tags: tags, Short: short, Content: content, Author: loginuser, Createtime: time.Now().Unix()}
 	_, err := models.AddArticle(art)
 
 	//返回数据给浏览器
-	response := gin.H{}
+	var response map[string]interface{}
 	if err == nil {
 		//无误
 		response = gin.H{"code": 1, "message": "ok"}
@@ -62,8 +66,52 @@ func ShowArticleGet(c *gin.Context) {
 
 	//获取id所对应的文章信息
 	art := models.QueryArticleWithId(id)
-	//渲染HTML
+	// 渲染 HTML
 	// c.HTML(http.StatusOK, "show_article.html", gin.H{"IsLogin": islogin, "Title": art.Title, "Content": art.Content})
 	// 以 markdown 的格式渲染文档
 	c.HTML(http.StatusOK, "show_article.html", gin.H{"IsLogin": islogin, "Title": art.Title, "Content": utils.SwitchMarkdownToHtml(art.Content)})
+}
+
+func UpdateArticleGet(c *gin.Context) {
+
+	//获取session
+	islogin := GetSession(c)
+
+	idstr := c.Query("id")
+	id, _ := strconv.Atoi(idstr)
+	fmt.Println(id)
+
+	//获取 id 所对应的文章信息
+	art := models.QueryArticleWithId(id)
+
+	c.HTML(http.StatusOK, "write_article.html", gin.H{"IsLogin": islogin, "Title": art.Title, "Tags": art.Tags, "Short": art.Short, "Content": art.Content, "Id": art.Id})
+}
+
+// 修改文章
+func UpdateArticlePost(c *gin.Context) {
+
+	idstr := c.Query("id")
+	id, _ := strconv.Atoi(idstr)
+	fmt.Println("postid:", id)
+
+	//获取浏览器传输的数据，通过表单的name属性获取值
+	title := c.PostForm("title")
+	tags := c.PostForm("tags")
+	short := c.PostForm("short")
+	content := c.PostForm("content")
+
+	//实例化model，修改数据库
+	art := models.Article{Id: id, Title: title, Tags: tags, Short: short, Content: content, Author: "", Createtime: 0}
+	_, err := models.UpdateArticle(art)
+
+	//返回数据给浏览器
+	var response map[string]interface{}
+	if err == nil {
+		//无误
+		response = gin.H{"code": 1, "message": "更新成功"}
+	} else {
+		response = gin.H{"code": 0, "message": "更新失败"}
+	}
+
+	c.JSON(http.StatusOK, response)
 }

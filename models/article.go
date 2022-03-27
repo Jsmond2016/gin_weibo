@@ -112,3 +112,11 @@ func QueryArticleWithId(id int) Article {
 	art := Article{id, title, tags, short, content, author, createtime}
 	return art
 }
+
+//----------修改数据----------
+func UpdateArticle(article Article) (int64, error) {
+
+	//数据库操作
+	return database.ModifyDB("update article set title=?,tags=?,short=?,content=? where id=?",
+		article.Title, article.Tags, article.Short, article.Content, article.Id)
+}
